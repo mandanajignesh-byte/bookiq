@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Source Sans 3', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+@layer base {
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  ::selection {
+    background-color: #f59e0b44;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: #c0b49e;
+    border-radius: 3px;
+  }
+  .dark ::-webkit-scrollbar-thumb { background: #574c3e; }
+}
+
+@layer components {
+  .card {
+    @apply bg-white dark:bg-ink-900 rounded-2xl border border-ink-100 dark:border-ink-800 shadow-sm hover:shadow-md transition-all duration-200;
+  }
+
+  .btn-primary {
+    @apply bg-ink-900 dark:bg-amber-400 text-white dark:text-ink-950 px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-ink-700 dark:hover:bg-amber-500 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply border border-ink-200 dark:border-ink-700 text-ink-700 dark:text-ink-300 px-4 py-2 rounded-xl text-sm hover:bg-ink-100 dark:hover:bg-ink-800 transition-colors;
+  }
+
+  .input {
+    @apply w-full bg-white dark:bg-ink-900 border border-ink-200 dark:border-ink-700 rounded-xl px-4 py-3 text-ink-900 dark:text-ink-100 placeholder-ink-400 focus:outline-none focus:ring-2 focus:ring-amber-400 transition-all;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, #ede8df 25%, #f7f5f0 50%, #ede8df 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  .dark .skeleton {
+    background: linear-gradient(90deg, #3d3530 25%, #574c3e 50%, #3d3530 75%);
+    background-size: 200% 100%;
+  }
+}

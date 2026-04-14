@@ -1,0 +1,87 @@
+version: '3.9'
+
+services:
+
+  # ── MySQL ──────────────────────────────────────────────
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_DATABASE: bookiq_db
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-password}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      retries: 10
+
+  # ── Redis ──────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"
+
+  # ── Django (Daphne ASGI) ───────────────────────────────
+  backend:
+    build: ./backend
+    restart: always
+    environment:
+      - DB_HOST=db
+      - DB_NAME=bookiq_db
+      - DB_USER=root
+      - DB_PASSWORD=${DB_PASSWORD:-password}
+      - REDIS_URL=redis://redis:6379/0
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - CHROMA_DB_PATH=/app/chroma_db
+      - DEBUG=False
+    volumes:
+      - chroma_data:/app/chroma_db
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    command: >
+      sh -c "python manage.py migrate &&
+             daphne -b 0.0.0.0 -p 8000 bookiq_project.asgi:application"
+
+  # ── Celery worker ──────────────────────────────────────
+  celery:
+    build: ./backend
+    restart: always
+    environment:
+      - DB_HOST=db
+      - DB_NAME=bookiq_db
+      - DB_USER=root
+      - DB_PASSWORD=${DB_PASSWORD:-password}
+      - REDIS_URL=redis://redis:6379/0
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - CHROMA_DB_PATH=/app/chroma_db
+    volumes:
+      - chroma_data:/app/chroma_db
+    depends_on:
+      - backend
+      - redis
+    command: celery -A bookiq_project worker --loglevel=info --concurrency=2
+
+  # ── Next.js frontend ───────────────────────────────────
+  frontend:
+    build: ./frontend
+    restart: always
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api
+      - NEXT_PUBLIC_WS_URL=ws://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
+  chroma_data:
