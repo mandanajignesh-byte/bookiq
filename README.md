@@ -6,11 +6,10 @@
 
 ## Screenshots
 
-> *(Add screenshots after running locally)*
-> - `docs/screenshot-library.png` — Library dashboard with book grid, filters, AI badges
-> - `docs/screenshot-detail.png` — Book detail with AI summary, sentiment, recommendations
-> - `docs/screenshot-ask.png` — Chat Q&A interface with citations and chat history
-> - `docs/screenshot-scrape.png` — Scrape page with live WebSocket progress log
+![Library Dashboard](docs/screenshot-library.png)
+![Book Detail](docs/screenshot-detail.png)
+![Ask AI](docs/screenshot-ask.png)
+![Scrape Page](docs/screenshot-scrape.png)
 
 ---
 
