@@ -12,8 +12,8 @@ class Book(models.Model):
     genre = models.CharField(max_length=100, blank=True)       # from scrape taxonomy
     price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     availability = models.CharField(max_length=100, blank=True)
-    book_url = models.URLField(max_length=1000, unique=True)
-    cover_image_url = models.URLField(max_length=1000, blank=True)
+    book_url = models.URLField(max_length=255, unique=True)
+    cover_image_url = models.URLField(max_length=500, blank=True)
     upc = models.CharField(max_length=50, blank=True)
 
     # AI-generated fields (populated async after scraping)
